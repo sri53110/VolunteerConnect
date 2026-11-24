@@ -1,0 +1,12 @@
+{% load static %}
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block title %}VolunteerConnect{% endblock %}</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/style.css' %}"></head><body>
+<nav class="nav"><a class="brand" href="{% url 'home' %}"><span class="brand-mark">V</span><span>Volunteer<span class="accent">Connect</span><small>MAKE EVERY HOUR COUNT</small></span></a>
+<div class="nav-links"><a href="{% url 'home' %}">Home</a><a href="{% url 'shift_list' %}">Find shifts</a>
+{% if user.is_authenticated %}<a href="{% url 'dashboard' %}">Dashboard</a>{% if user.is_staff or user.profile.role != 'VOLUNTEER' %}<a href="{% url 'admin_dashboard' %}">Management</a>{% endif %}
+<form method="post" action="{% url 'logout' %}" class="inline">{% csrf_token %}<button class="nav-login">Sign out</button></form>
+{% else %}<a href="{% url 'login' %}">Log in</a><a class="btn btn-small" href="{% url 'register' %}">Join the community</a>{% endif %}</div></nav>
+<main>{% if messages %}<div class="alerts">{% for message in messages %}<div class="alert {{ message.tags }}">{{ message }}</div>{% endfor %}</div>{% endif %}{% block content %}{% endblock %}</main>
+<footer><div class="footer-inner"><div class="brand footer-brand"><span class="brand-mark">V</span><span>Volunteer<span class="accent">Connect</span><small>MAKE EVERY HOUR COUNT</small></span></div><p>Bringing people and purpose together.</p><span>© 2026 VolunteerConnect · Live Shift Planner</span></div></footer>
+<script src="{% static 'js/app.js' %}"></script>{% block scripts %}{% endblock %}</body></html>
