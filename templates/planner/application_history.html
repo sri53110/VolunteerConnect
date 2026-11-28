@@ -1,0 +1,33 @@
+{% extends 'planner/base.html' %}
+{% block title %}Application history | VolunteerConnect{% endblock %}
+{% block content %}
+<section class="dash-head">
+  <div>
+    <div class="eyebrow">YOUR VOLUNTEER SPACE</div>
+    <h1>Application history</h1>
+    <p>Review the shifts you applied for, their status, and important dates.</p>
+  </div>
+  <a class="btn" href="{% url 'shift_list' %}">Explore shifts ↗</a>
+</section>
+<section class="panel">
+  <div class="panel-heading"><h2>My applications</h2><a href="{% url 'dashboard' %}">Back to dashboard</a></div>
+  {% for item in signups %}
+    <div class="list-row">
+      <div>
+        <b>{{ item.shift.title }}</b>
+        <small>{{ item.shift.event.title }} · {{ item.shift.zone.name }} · {{ item.shift.event.venue }}</small>
+        <small>Applied: {{ item.applied_at|date:"M d, Y H:i" }} · Shift starts: {{ item.shift.starts_at|date:"M d, Y H:i" }} · Shift ends: {{ item.shift.ends_at|date:"M d, Y H:i" }}{% if item.completed_at %} · Completed: {{ item.completed_at|date:"M d, Y H:i" }}{% endif %}</small>
+      </div>
+      <span class="status status-{{ item.status|lower }}">{{ item.get_status_display }}</span>
+      {% if item.status == 'APPROVED' %}
+        <form method="post" action="{% url 'complete_signup' item.id %}">{% csrf_token %}<button class="btn btn-small">Mark shift completed</button></form>
+      {% endif %}
+      {% if item.status == 'PENDING' or item.status == 'APPROVED' %}
+        <form method="post" action="{% url 'withdraw_signup' item.id %}">{% csrf_token %}<button class="link-button">Withdraw</button></form>
+      {% endif %}
+    </div>
+  {% empty %}
+    <div class="empty-state">No active or completed applications to show. <a href="{% url 'shift_list' %}">Explore available shifts.</a></div>
+  {% endfor %}
+</section>
+{% endblock %}
